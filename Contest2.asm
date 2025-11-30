@@ -24,5 +24,45 @@ win BYTE "You cleared the board! YOU WIN!",0
 card1 DWORD ?
 card2 DWORD ?
 
+.code
+
+FillPairs PROC USES esi ebx: 
+	mov bl, 0		
+	mov exi, 0 
+
+FillLoop:
+	mov values[esi], bl
+	mov value[esi+1], bl
+
+	add esi, 2		
+	inc bl
+
+	cmp bl, PAIRS
+	jb FillLoop
+
+	ret
+
+FillPairs ENDP
+
+shuffle PROC USES eax ebx ecx edx esi 
+	mov ecx, SIZE -1
+	mov esi, ecx 
+
+shuffleLoop:
+	mov eax, esi
+	inc eax
+	call RandomRange		
+
+	mov bl, values[esi]
+	mov dl, values[eax]
+	mov values[esi], dl
+	mov values[eax], bl
+
+	dec esi
+	loop shuffleLoop
+
+	ret
+shuffle ENDP
+
 
 
