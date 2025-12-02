@@ -65,4 +65,29 @@ shuffleLoop:
 shuffle ENDP
 
 
+main PROC
+	call Randomize
+	call FillPairs
+	call shuffle
+
+	mov curr_count, SIZE
+	mov esi, 0
+
+PrintLoop:
+	movzx eax, values[esi]
+	call WriteDex
+	mov al, ' '
+	call WriteChar
+
+	inc esi
+	cmp esi, SIZE
+	jl PrintLoop
+	call Crlf
+
+	exit
+
+main ENDP
+
+END main
+
 
