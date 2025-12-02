@@ -81,12 +81,13 @@ ColumnLoop:
 	cmp al, EMPTY
 	je DispDot
 
-DispNumber:
-	movzx eax, al
-	call WriteDec
+DispLetter:
+	add al, 'A'		;convert the number to a letter
+	call WriteChar
 	mov al, ' '
 	call WriteChar
 	mov al, ' '
+	call WriteChar
 	jmp NextCell
 
 DispDot:
@@ -118,8 +119,8 @@ main PROC
 	call formatBoard
 	call WaitMsg
 
-	mov curr_count, GRIDSIZE
-	mov esi, 0
+;	mov curr_count, GRIDSIZE
+;	mov esi, 0
 
 ;PrintLoop:
 ;	movzx eax, values[esi]
