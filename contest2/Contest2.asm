@@ -11,6 +11,7 @@ EMPTY EQU 0FFh		  ;marker for removed card
 values BYTE GRIDSIZE DUP(?)		;Displayed values are 0 to 24 or EMPTY
 curr_count DWORD GRIDSIZE		; number of non empty card on the grid
 
+colHeader BYTE "  0  1  2  3  4  5  6  7  8  9", 0
 promptStart	BYTE "Pick first card(row column): ", 0
 promptNextPick BYTE "Pick adjacent matching card", 0
 Invalid BYTE "Invalid pick. Try again.",0
@@ -67,14 +68,23 @@ shuffleLoop:
 	ret
 shuffle ENDP
 
-
 formatBoard PROC USES eax ebx ecx edx esi edi
 	call Clrscr
+	mov edx, OFFSET colHeader
+	call WriteString
+	call Crlf
+
 	mov esi, 0		; linear index
 	mov ebx, 0		; row
 
 RowLoop:
-	mov edi, 0			;column
+	mov al, '0'
+	add al, bl
+	call WriteChar
+	mov al, ' '  
+	call WriteChar
+
+	mov  edi, 0
 
 ColumnLoop:
 	mov al, values[esi]
@@ -116,6 +126,7 @@ UserSelection PROC USES ebx ecx edx esi
 	mov esi, edx
 
 inputLoop:
+	call Crlf
 	mov edx, esi
 	call WriteString	;print prompt
 
