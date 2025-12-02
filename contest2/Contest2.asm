@@ -112,12 +112,66 @@ NextCell:
 	ret
 formatBoard ENDP
 
+UserSelection PROC USES ebx ecx edx esi
+	mov esi, edx
+
+inputLoop:
+	mov edx, esi
+	call WriteString	;print prompt
+
+	;READ ROW
+	call ReadInt
+	mov ebx, eax
+
+	; READ COLUMN
+	call ReadInt
+	mov ecx, eax
+
+	;Validate Row
+	cmp ebx, 0
+	jl BadInput
+
+	;VUALIDATE  COLMN
+	cmp ecx, 0
+	jl BadInput
+	cmp ecx, COLS
+	jge BadInput
+
+	;Convert to index
+	mov eax, ebx
+	imul eax, COLS
+	add eax, ecx
+
+	;Validate card has not been removed
+	mov dl, values[eax]
+	cmp dl, EMPTY
+	je BadInput
+
+	ret
+
+BadInput:
+	call Crlf
+	mov edx, OFFSET Invalid
+	call WriteString
+	call Crlf
+	jmp InputLoop
+
+UserSelection ENDP
+
 main PROC
 	call Randomize
 	call FillPairs
 	call shuffle
 	call formatBoard
 	call WaitMsg
+
+	mov edx, OFFSET promptStart
+	call UserSelection
+	mov card1, eax
+
+	mov edx, OFFSET promptNextPick
+	call UserSelection
+	mov card2, eax
 
 ;	mov curr_count, GRIDSIZE
 ;	mov esi, 0
