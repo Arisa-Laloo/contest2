@@ -68,24 +68,69 @@ shuffleLoop:
 shuffle ENDP
 
 
+formatBoard PROC USES eax ebx ecx edx esi edi
+	call Clrscr
+	mov esi, 0		; linear index
+	mov ebx, 0		; row
+
+RowLoop:
+	mov edi, 0			;column
+
+ColumnLoop:
+	mov al, values[esi]
+	cmp al, EMPTY
+	je DispDot
+
+DispNumber:
+	movzx eax, al
+	call WriteDec
+	mov al, ' '
+	call WriteChar
+	mov al, ' '
+	jmp NextCell
+
+DispDot:
+	mov al, '.'
+	call WriteChar
+	mov al, ' '
+	call WriteChar
+	mov al, ' '
+	call WriteChar
+
+NextCell:
+	inc esi
+	inc edi
+	cmp edi, COLS
+	jb ColumnLoop
+
+	call Crlf
+	inc ebx
+	cmp ebx, ROWS
+	jb RowLoop
+
+	ret
+formatBoard ENDP
+
 main PROC
 	call Randomize
 	call FillPairs
 	call shuffle
+	call formatBoard
+	call WaitMsg
 
 	mov curr_count, GRIDSIZE
 	mov esi, 0
 
-PrintLoop:
-	movzx eax, values[esi]
-	call WriteDec
-	mov al, ' '
-	call WriteChar
+;PrintLoop:
+;	movzx eax, values[esi]
+;	call WriteDec
+;	mov al, ' '
+;	call WriteChar
 
-	inc esi
-	cmp esi, GRIDSIZE
-	jl PrintLoop
-	call Crlf
+;	inc esi
+;	cmp esi, GRIDSIZE
+;	jl PrintLoop
+;	call Crlf
 
 	exit
 
