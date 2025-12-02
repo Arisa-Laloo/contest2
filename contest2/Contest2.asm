@@ -21,6 +21,9 @@ matched BYTE "Match removed!",0
 gameOver BYTE "Game over: no adjacent matches left.",0
 win BYTE "You cleared the board! YOU WIN!",0
 
+space BYTE " ", 0 
+dot BYTE ". ", 0		; for 
+
 card1 DWORD ?
 card2 DWORD ?
 
