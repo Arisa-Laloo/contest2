@@ -141,6 +141,8 @@ inputLoop:
 	;Validate Row
 	cmp ebx, 0
 	jl BadInput
+	cmp ebx, COLS
+	jge BadInput
 
 	;VUALIDATE  COLMN
 	cmp ecx, 0
@@ -154,8 +156,8 @@ inputLoop:
 	add eax, ecx
 
 	;Validate card has not been removed
-	mov dl, values[eax]
-	cmp dl, EMPTY
+	movzx edx, values[eax]
+	cmp edx, EMPTY
 	je BadInput
 
 	ret
@@ -168,6 +170,58 @@ BadInput:
 	jmp InputLoop
 
 UserSelection ENDP
+
+index_to_rowcol PROC USES edx ecx
+	xor edx, edx
+	mov ecx, COLS
+	div ecx
+
+	mov ebx, eax 
+	mov ecx, edx
+	ret
+index_to_rowcol ENDP
+
+diff PROC
+	sub eax, ebx
+	jns done		;result not negative then skip negation
+	neg eax 
+done:
+	ret
+diff ENDP
+
+adjacent PROC USES ebx ecx esi edi
+	
+	cmp eax, edx		; eax-index 1, edx-index 2
+	je NotAdjacent			;not a valid adjacent match
+	
+	push edx
+
+	call index_to_rowcol
+	mov esi, ebx
+	mov edi, ecx
+
+	pop eax 
+	call index_to_rowcol
+	
+	mov eax, esi		;row 1, row 2 in ebx
+	call diff
+	cmp eax, 1
+	jg NotAdjacent
+
+	mov eax, edi
+	mov ebx, ecx
+	call diff 
+	cmp eax, 1
+	ja NotAdjacent
+
+	mov eax, 1
+	ret					;return 1 if adjacent
+	
+	NotAdjacent:
+		xor eax, eax	;return 0 if not adjacent
+		ret
+	adjacent ENDP
+
 
 main PROC
 	call Randomize
@@ -183,6 +237,7 @@ main PROC
 	mov edx, OFFSET promptNextPick
 	call UserSelection
 	mov card2, eax
+	 
 
 ;	mov curr_count, GRIDSIZE
 ;	mov esi, 0
