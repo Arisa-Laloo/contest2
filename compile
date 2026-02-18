@@ -1,0 +1,2 @@
+ml /c /coff main.asm
+link /SUBSYSTEM:CONSOLE main.obj Irvine32.lib
