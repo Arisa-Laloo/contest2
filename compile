@@ -1,2 +1,2 @@
-ml /c /coff main.asm
-link /SUBSYSTEM:CONSOLE main.obj Irvine32.lib
+ml /c /coff /I Irvine contest2.asm
+link /SUBSYSTEM:CONSOLE contest2.obj /LIBPATH:Irvine Irvine32.lib kernel32.lib user32.lib
