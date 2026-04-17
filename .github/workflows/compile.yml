@@ -27,7 +27,7 @@ jobs:
           where link
           dir
           dir Irvine
-          type compile.txt
+          type compile
 
       - name: Compile MASM project from compile.txt
         shell: cmd
