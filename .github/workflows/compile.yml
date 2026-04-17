@@ -1,0 +1,65 @@
+name: REVU MASM Compilation
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up MSVC tools
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x86
+
+      - name: Verify tools and files
+        shell: cmd
+        run: |
+          where ml
+          where link
+          dir
+          dir Irvine
+          type compile.txt
+
+      - name: Compile MASM project from compile.txt
+        shell: cmd
+        run: |
+          if not exist compile.txt (
+            echo ERROR: compile.txt not found
+            exit /b 1
+          )
+
+          setlocal EnableDelayedExpansion
+
+          for /f "usebackq delims=" %%L in ("compile.txt") do (
+            set "LINE=%%L"
+
+            if not "!LINE!"=="" (
+              echo !LINE! | findstr /b /c:";" /c:"#">nul
+              if errorlevel 1 (
+                echo.
+                echo Executing: !LINE!
+                call !LINE!
+                if errorlevel 1 exit /b !errorlevel!
+              )
+            )
+          )
+
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-results
+          path: |
+            *.exe
+            *.obj
+            *.lst
+            *.map
